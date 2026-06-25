@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from workspace_indexer.models import FileRecord
+from asset_indexer.models import FileRecord
 
 
 def scan_directory(root_path: Path) -> list[FileRecord]:

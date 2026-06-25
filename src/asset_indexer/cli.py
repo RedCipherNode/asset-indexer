@@ -1,12 +1,12 @@
 import argparse
 from pathlib import Path
 
-from workspace_indexer.file_scanner import scan_directory
+from asset_indexer.file_scanner import scan_directory
 
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="workspace-indexer",
+        prog="asset_indexer",
         description="Scan a directory and count its files.",
     )
 
