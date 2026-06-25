@@ -46,6 +46,14 @@ def create_parser() -> argparse.ArgumentParser:
         help="Additional directory names to exclude from scanning.",
     )
 
+    parser.add_argument(
+        "--largest-limit",
+        type=int,
+        default=10,
+        metavar="COUNT",
+        help="Number of largest files to include in the report.",
+    )
+
     return parser
 
 
@@ -53,16 +61,23 @@ def main() -> None:
     parser = create_parser()
     args = parser.parse_args()
 
+    if args.largest_limit < 1:
+        parser.error("--largest-limit must be at least 1.")
+
     try:
         file_records = scan_directory(
             root_path=args.directory,
             excluded_directories=args.exclude,
 )
+
     except (FileNotFoundError, NotADirectoryError) as error:
         parser.error(str(error))
         return
 
-    asset_stats = analyze_files(file_records)
+    asset_stats = analyze_files(
+        file_records=file_records,
+        largest_file_limit=args.largest_limit,
+)
 
     print(f"Scanned directory: {args.directory.resolve()}")
     print(f"Found files: {asset_stats.total_files}")
