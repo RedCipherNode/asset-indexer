@@ -3,6 +3,7 @@ from pathlib import Path
 
 from asset_indexer.file_analyzer import analyze_files
 from asset_indexer.file_scanner import scan_directory
+from asset_indexer.report_writer import write_manifest, write_markdown_report
 
 
 def format_size(size_bytes: int) -> str:
@@ -28,6 +29,13 @@ def create_parser() -> argparse.ArgumentParser:
         "directory",
         type=Path,
         help="Directory to scan recursively.",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("output"),
+        help="Directory for generated manifest and report files.",
     )
 
     return parser
@@ -57,3 +65,21 @@ def main() -> None:
     for file_record in asset_stats.largest_files:
         relative_path = file_record.path.relative_to(args.directory)
         print(f"  {format_size(file_record.size_bytes)}  {relative_path}")
+
+    manifest_path = args.output_dir / "manifest.json"
+    report_path = args.output_dir / "report.md"
+
+    write_manifest(
+        output_path=manifest_path,
+        root_path=args.directory,
+        asset_stats=asset_stats,
+    )
+
+    write_markdown_report(
+        output_path=report_path,
+        root_path=args.directory,
+        asset_stats=asset_stats,
+    )
+
+    print(f"\nManifest written to: {manifest_path.resolve()}")
+    print(f"Report written to: {report_path.resolve()}")
