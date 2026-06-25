@@ -38,6 +38,14 @@ def create_parser() -> argparse.ArgumentParser:
         help="Directory for generated manifest and report files.",
     )
 
+    parser.add_argument(
+        "--exclude",
+        nargs="*",
+        default=[],
+        metavar="DIRECTORY",
+        help="Additional directory names to exclude from scanning.",
+    )
+
     return parser
 
 
@@ -46,7 +54,10 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        file_records = scan_directory(args.directory)
+        file_records = scan_directory(
+            root_path=args.directory,
+            excluded_directories=args.exclude,
+)
     except (FileNotFoundError, NotADirectoryError) as error:
         parser.error(str(error))
         return
